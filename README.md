@@ -24,11 +24,6 @@ With exe file
 
 ```bash
 cli.exe --help
-
-# example
-cli.exe list-display
-
-cli.exe brightness --help
 ```
 
 With Python file (Must install all the packages in the `requirements.txt`)
@@ -37,6 +32,14 @@ With Python file (Must install all the packages in the `requirements.txt`)
 python cli.py --help
 ```
 
+Example
+```bash
+cli.exe list-display
+
+cli.exe brightness --help
+
+cli.exe brightness 1 70
+```
 
 ### Build
 
