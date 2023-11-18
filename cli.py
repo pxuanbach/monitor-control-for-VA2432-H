@@ -1,14 +1,18 @@
+from typing import Literal
 import typer
 from typing_extensions import Annotated
 from rich import print
 
 from core.monitor_control import (
     get_all_displays, 
-    set_display_brightness, 
+    get_display_brightness,
+    set_display_brightness,
+    get_display_contrast, 
     set_display_contrast,
+    get_display_color_preset,
     set_display_color_preset
 )
-from core.monitor_info import ColorPresetEnum
+from core.monitor_info import ColorPresetEnum, MethodEnum
 
 
 app = typer.Typer(
@@ -21,7 +25,7 @@ app = typer.Typer(
 
 
 @app.command()
-def list_display():
+def list():
     """
     Show information for all active displays.
     """
@@ -33,42 +37,67 @@ def list_display():
 
 @app.command()
 def brightness(
+    method: Annotated[
+        MethodEnum, typer.Option(case_sensitive=False)
+    ] = MethodEnum.GET,
+    *,
     display_index: Annotated[int, typer.Argument(help="Index of monitors")],
-    value: Annotated[int, typer.Argument(help="New brightness value (typically 0-100)")]
+    value: Annotated[int, typer.Argument(
+        help="<Method SET> New brightness value (typically 0-100)"
+    )] = 80
 ):
     """
-    Sets the brightness level of display to a given value.
+    Get or Set the brightness level of display to a given value.
     """
-    success = set_display_brightness(display_index, value)
-    if success:
-        return print("Change Brightness success!")
+    if method == MethodEnum.SET:
+        success = set_display_brightness(display_index, value)
+        if success:
+            return print("Change Brightness success!")
+    elif method == MethodEnum.GET:
+        result = get_display_brightness(display_index)
+        if result != -1:
+            return print(f"Brightness: {result}")
     return
 
 
 @app.command()
 def contrast(
+    method: Annotated[
+        MethodEnum, typer.Option(case_sensitive=False)
+    ] = MethodEnum.GET,
+    *,
     display_index: Annotated[int, typer.Argument(help="Index of monitors")],
-    value: Annotated[int, typer.Argument(help="New contrast value (typically 0-100)")]
+    value: Annotated[int, typer.Argument(
+        help="<Method SET> New contrast value (typically 0-100)"
+    )] = 50
 ):
     """
-    Sets the monitors back-light contrast.
+    Get or Set the monitors back-light contrast.
     """
-    success = set_display_contrast(display_index, value)
-    if success:
-        return print("Change Contrast success!")
+    if method == MethodEnum.SET:
+        success = set_display_contrast(display_index, value)
+        if success:
+            return print("Change Contrast success!")
+    elif method == MethodEnum.GET:
+        result = get_display_contrast(display_index)
+        if result != -1:
+            return print(f"Contrast: {result}")
     return
-
 
 @app.command()
 def color_preset(
+    method: Annotated[
+        MethodEnum, typer.Option(case_sensitive=False)
+    ] = MethodEnum.GET,
+    *,
     display_index: Annotated[int, typer.Argument(help="Index of monitors")],
     value: Annotated[ColorPresetEnum, typer.Argument(
-        help="New ColorPreset value in ColorPresetEnum",
+        help="<Method SET> New ColorPreset value in ColorPresetEnum",
         metavar="ColorPresetEnum"
     )] = ColorPresetEnum.Native
 ):
     """
-    Sets the color preset of display to a given value.\n
+    Get or Set the color preset of display to a given value.\n
     ColorPresetEnum: \n
         4: "Warm"\n
         5: "Native"\n
@@ -76,9 +105,14 @@ def color_preset(
         8: "Bluish"\n
         11: "User Color"
     """
-    success = set_display_color_preset(display_index, int(value))
-    if success:
-        return print("Change ColorPreset success!")
+    if method == MethodEnum.SET:
+        success = set_display_color_preset(display_index, int(value))
+        if success:
+            return print("Change ColorPreset success!")
+    elif method == MethodEnum.GET:
+        color = get_display_color_preset(display_index)
+        if color != "":
+            return print(f"ColorPreset: {color}")
     return
 
 

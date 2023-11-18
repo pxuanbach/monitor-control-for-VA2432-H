@@ -4,7 +4,11 @@ import monitorcontrol.monitorcontrol as mc
 import screen_brightness_control as sbc
 import screeninfo as si
 import wmi
-from core.monitor_info import MonitorInfo, ColorPresetEnum, convert_win32_to_monitor
+from core.monitor_info import (
+    MonitorInfo, 
+    convert_win32_to_monitor, 
+    resp_color_preset
+)
 
 
 def get_all_displays() -> List[MonitorInfo]:
@@ -34,8 +38,22 @@ def get_all_displays() -> List[MonitorInfo]:
 	return results
 
 
-def set_display_brightness(display_index: int, value: int):
-    """Sets the brightness level of display to a given value.
+def get_display_brightness(display_index: int) -> int:
+    """Get the brightness level of display to a given value.
+
+    Args:
+        display_index (int): Index of monitors.
+    """
+    try:
+        brightness = sbc.get_brightness(display=display_index)
+        return brightness[0]
+    except Exception as e:
+        print(str(e))
+    return -1
+
+
+def set_display_brightness(display_index: int, value: int) -> bool:
+    """Set the brightness level of display to a given value.
 
     Args:
         display_index (int): Index of monitors.
@@ -49,8 +67,24 @@ def set_display_brightness(display_index: int, value: int):
     return True
 
 
-def set_display_contrast(display_index: int, value: int):
-    """Sets the monitors back-light contrast.
+def get_display_contrast(display_index: int) -> int:
+    """Get the monitors back-light contrast.
+
+    Args:
+        display_index (int): Index of monitors.
+        value (int): New contrast value (typically 0-100).
+    """
+    mc_monitors = mc.get_monitors()
+    try:
+        with mc_monitors[display_index]:
+            return mc_monitors[display_index].get_contrast()
+    except Exception as e:
+        print(str(e))
+    return -1
+
+
+def set_display_contrast(display_index: int, value: int) -> bool:
+    """Set the monitors back-light contrast.
 
     Args:
         display_index (int): Index of monitors.
@@ -66,8 +100,24 @@ def set_display_contrast(display_index: int, value: int):
     return True
 
 
-def set_display_color_preset(display_index: int, value: int):
-    """Sets the monitors color preset.
+def get_display_color_preset(display_index: int) -> str:
+    """Get the monitors color preset.
+
+    Args:
+        display_index (int): Index of monitors.
+    """
+    mc_monitors = mc.get_monitors()
+    try:
+        with mc_monitors[display_index]:
+            color = mc_monitors[display_index].get_color_preset()
+            return resp_color_preset(str(color))
+    except Exception as e:
+        print(str(e))
+    return ""
+
+
+def set_display_color_preset(display_index: int, value: int) -> bool:
+    """Set the monitors color preset.
 
     Args:
         display_index (int): Index of monitors.

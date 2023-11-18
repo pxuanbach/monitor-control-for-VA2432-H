@@ -1,6 +1,12 @@
 from enum import Enum
 from typing import Optional
 
+
+class MethodEnum(str, Enum):
+	GET = "get"
+	SET = "set"
+
+
 class ColorPresetEnum(str, Enum):
 	Warm = "4"
 	Native = "5"
@@ -76,16 +82,6 @@ class MonitorInfo():
 	Contrast: Optional[int] = None
 	ColorPreset: Optional[ColorPresetEnum] = None
 	
-	def resp_color_preset(self):
-		dict = {
-			"4": "[4] Warm",
-			"5": "[5] Native",
-			"6": "[6] Cool",
-			"8": "[8] Bluish",
-			"11": "[11] User Color",
-		}
-		return  dict[self.ColorPreset] if self.ColorPreset else None
-	
 	def __repr__(self):
 		return \
 			f"Monitor {self.index}\n"\
@@ -98,8 +94,18 @@ class MonitorInfo():
         	+ f"IsPrimary: {self.IsPrimary}\n"\
         	+ f"Brightness: {self.Brightness}\n"\
         	+ f"Contrast: {self.Contrast}\n"\
-        	+ f"ColorPreset: {self.resp_color_preset()}\n"
-	
+        	+ f"ColorPreset: {resp_color_preset(self.ColorPreset)}\n"
+
+def resp_color_preset(color_preset: Optional[str]):
+	dict = {
+		"4": "[4] Warm",
+		"5": "[5] Native",
+		"6": "[6] Cool",
+		"8": "[8] Bluish",
+		"11": "[11] User Color",
+	}
+	return  dict[color_preset] if color_preset else None
+
    
 def convert_win32_to_monitor(index, win32_monitor) -> MonitorInfo:
 	return MonitorInfo(
