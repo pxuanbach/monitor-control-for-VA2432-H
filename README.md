@@ -34,11 +34,11 @@ python cli.py --help
 
 Example
 ```bash
-cli.exe list-display
+cli.exe list
 
 cli.exe brightness --help
-
-cli.exe brightness 1 70
+cli.exe brightness --method get 1
+cli.exe brightness --method set 1 70
 ```
 
 ### Build
