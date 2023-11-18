@@ -10,7 +10,8 @@ from core.monitor_control import (
     get_display_contrast, 
     set_display_contrast,
     get_display_color_preset,
-    set_display_color_preset
+    set_display_color_preset,
+    get_all_color_presets
 )
 from core.monitor_info import ColorPresetEnum, MethodEnum
 
@@ -32,6 +33,19 @@ def list():
     monitors = get_all_displays()
     for monitor in monitors:
         print(monitor.__repr__())
+    return
+
+
+@app.command()
+def list_color_preset(
+    display_index: Annotated[int, typer.Argument(help="Index of monitors")]
+):
+    """
+    Show all available color presets.
+    """
+    color_presets = get_all_color_presets(display_index)
+    if len(color_presets) > 0:
+        [print(c[0]) for c in color_presets]
     return
 
 

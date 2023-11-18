@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Optional
 
+from core.vcp import DISPLAY_COLOR_PRESET
+
 
 class MethodEnum(str, Enum):
 	GET = "get"
@@ -97,14 +99,7 @@ class MonitorInfo():
         	+ f"ColorPreset: {resp_color_preset(self.ColorPreset)}\n"
 
 def resp_color_preset(color_preset: Optional[str]):
-	dict = {
-		"4": "[4] Warm",
-		"5": "[5] Native",
-		"6": "[6] Cool",
-		"8": "[8] Bluish",
-		"11": "[11] User Color",
-	}
-	return  dict[color_preset] if color_preset else None
+	return  DISPLAY_COLOR_PRESET[color_preset] if color_preset else None
 
    
 def convert_win32_to_monitor(index, win32_monitor) -> MonitorInfo:

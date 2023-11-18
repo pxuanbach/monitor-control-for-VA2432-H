@@ -9,6 +9,7 @@ from core.monitor_info import (
     convert_win32_to_monitor, 
     resp_color_preset
 )
+from core.vcp import COLOR_PRESET_CODE, DISPLAY_COLOR_PRESET
 
 
 def get_all_displays() -> List[MonitorInfo]:
@@ -98,6 +99,27 @@ def set_display_contrast(display_index: int, value: int) -> bool:
         print(str(e))
         return False
     return True
+
+
+def get_all_color_presets(display_index: int) -> List[str]:
+    """Get all available color presets 
+    """
+    mc_monitors = mc.get_monitors()
+    try:
+        with mc_monitors[display_index]:
+            vcp = mc_monitors[display_index].get_vcp_capabilities()
+            color_presets = vcp['color_presets']
+            results = []
+            for c in color_presets:
+                text = str(c)
+                if text.startswith("ColorPreset.COLOR_TEMP_"):
+                    temp = text.replace("ColorPreset.COLOR_TEMP_", "")
+                    code = COLOR_PRESET_CODE[temp]
+                    results.append((DISPLAY_COLOR_PRESET[code], code))
+            return results
+    except Exception as e:
+        print(str(e))
+    return []
 
 
 def get_display_color_preset(display_index: int) -> str:
